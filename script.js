@@ -21,7 +21,19 @@ function render(){
     list.innerHTML = '';
     todos.forEach((todo) =>{
         const li = document.createElement("li");
-        li.textContent = todo.text;
+        const checkbox = document.createElement("input");
+        checkbox.type = 'checkbox';
+        checkbox.checked = todo.done;
+        checkbox.addEventListener("change",()=>{
+            todo.done = checkbox.checked;
+            console.log(todo);
+        });
+        
+        const span = document.createElement("span");
+        span.textContent = todo.text;
+
+        li.appendChild(checkbox);
+        li.appendChild(span);
         list.appendChild(li);
     })
 }
