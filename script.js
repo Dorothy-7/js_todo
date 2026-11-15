@@ -1,5 +1,6 @@
 const form = document.getElementById('todo-form');
 const input = document.getElementById('todo-input');
+const list = document.getElementById('todo-list');
 
 let todos = []; //タスクを溜めておく場所
 let nextId =1; //タスクのIDを管理
@@ -11,6 +12,16 @@ form.addEventListener('submit',(e) =>{
     todos.push({id: nextId++, text:text, done:false});
     nextId++;
     input.value ='';
-    console.log(todos);
+    render();
 
 });
+
+// ★ ここから下を追加
+function render(){
+    list.innerHTML = '';
+    todos.forEach((todo) =>{
+        const li = document.createElement("li");
+        li.textContent = todo.text;
+        list.appendChild(li);
+    })
+}
