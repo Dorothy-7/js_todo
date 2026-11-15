@@ -32,9 +32,19 @@ function render(){
         
         const span = document.createElement("span");
         span.textContent = todo.text;
+        
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "削除";
+        deleteButton.addEventListener("click",()=>{
+            if(!confirm("本当に削除しますか？"))return;{
+                todos = todos.filter((t) => t.id !== todo.id);
+                render();
+            }
+        });
 
         li.appendChild(checkbox);
         li.appendChild(span);
+        li.appendChild(deleteButton);
         list.appendChild(li);
     })
     const doneCount = todos.filter((todo) => todo.done).length;
