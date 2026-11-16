@@ -10,14 +10,14 @@ form.addEventListener('submit',(e) =>{
     e.preventDefault();
     const text = input.value.trim();
     if(text === '')return;
-    todos.push({id: nextId++, text:text, done:false});
+    todos.push({id: nextId++, text:text, done:false, editing:false});
     // nextId++;
     input.value ='';
     render();
 
 });
 
-// ★ ここから下を追加
+
 function render(){
     list.innerHTML = '';
     todos.forEach((todo) =>{
@@ -30,30 +30,53 @@ function render(){
             render();
         });
         
-        const span = document.createElement("span");
-        span.textContent = todo.text;
-        
-        const deleteButton = document.createElement("button");
-        deleteButton.textContent = "削除";
-        deleteButton.addEventListener("click",()=>{
-            if(!confirm("本当に削除しますか？"))return;{
-                todos = todos.filter((t) => t.id !== todo.id);
-                render();
-            }
-        });
 
         li.appendChild(checkbox);
-        li.appendChild(span);
-        li.appendChild(deleteButton);
-        list.appendChild(li);
+        if(todo.editing){
+            const editInput = document.createElement("input");
+            editInput.type = "text";
+            editInput.value = todo.text;
+            li.appendChild(editInput); 
+
+            const saveButton = document.createElement("button");
+            saveButton.textContent = "保存";
+            saveButton.addEventListener("click",()=>{
+                const newText = editInput.value.trim();             
+                if(newText === '')return;                           
+                todo.text = newText;                                
+                todo.editing = false;                               
+                render();                                           
+            });     
+
+            li.appendChild(editInput);
+            li.appendChild(saveButton);
+
+        }else{
+            //通常時：文字、編集ボタン、削除ボタンを表示
+            const span = document.createElement("span");
+            span.textContent = todo.text;
+            
+            const editButton = document.createElement("button");
+            editButton.textContent = "編集";
+            editButton.addEventListener("click",()=>{
+                todo.editing = true;
+                render();
+            });
+            const deleteBtn = document.createElement("button");
+            deleteBtn.textContent = "削除";
+            deleteBtn.addEventListener("click",()=>{
+                if(!confirm("本当によろしいですか？"))return;
+                    todos = todos.filter((t) => t.id !== todo.id);
+                    render();
+            });
+            li.appendChild(span);
+            li.appendChild(editButton);
+            li.appendChild(deleteBtn);
+        }
+        list.appendChild(li); 
     })
     const doneCount = todos.filter((todo) => todo.done).length;
     counter.textContent = `全てのタスク：${todos.length} 完了済み：${doneCount} 未完了：${todos.length - doneCount}`;
 }
-
-// checkbox.addEventListener("change",()=>{
-//     todo.done = checkbox.checked;
-//     console.log(todo);
-// });
 
 render();
