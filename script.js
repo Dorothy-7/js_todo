@@ -5,13 +5,14 @@ const counter = document.getElementById('counter');
 
 let todos = []; //タスクを溜めておく場所
 let nextId =1; //タスクのIDを管理
+let editingId = null;   //編集中のタスクのid。なければ null
+let editingDraft = '';  // ★ 入力欄に打ちかけの文字
 
 form.addEventListener('submit',(e) =>{
     e.preventDefault();
     const text = input.value.trim();
     if(text === '')return;
-    todos.push({id: nextId++, text:text, done:false, editing:false});
-    // nextId++;
+    todos.push({id: nextId++, text:text, done:false});
     input.value ='';
     render();
 
@@ -32,11 +33,13 @@ function render(){
         
 
         li.appendChild(checkbox);
-        if(todo.editing){
+        if(todo.id === editingId){
             const editInput = document.createElement("input");
             editInput.type = "text";
-            editInput.value = todo.text;
-            li.appendChild(editInput); 
+            editInput.value = editingDraft;             
+            editInput.addEventListener("input",()=>{     
+            editingDraft = editInput.value;          
+        });                                         
 
             const saveButton = document.createElement("button");
             saveButton.textContent = "保存";
@@ -44,7 +47,8 @@ function render(){
                 const newText = editInput.value.trim();             
                 if(newText === '')return;                           
                 todo.text = newText;                                
-                todo.editing = false;                               
+                editingId = null;
+                editingDraft = '';                       
                 render();                                           
             });     
 
@@ -59,7 +63,8 @@ function render(){
             const editButton = document.createElement("button");
             editButton.textContent = "編集";
             editButton.addEventListener("click",()=>{
-                todo.editing = true;
+                editingId = todo.id;
+                editingDraft = todo.text; 
                 render();
             });
             const deleteBtn = document.createElement("button");
